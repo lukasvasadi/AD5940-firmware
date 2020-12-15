@@ -26,7 +26,7 @@
 
 /**************************************************************************/
 /*!
-    @brief  Writes 8-bits to the specified destination register
+    @brief  Writes to the specified destination register
 
     @param cs chip select pin to target device
     @param reg register address
@@ -39,8 +39,8 @@ static void writeRegister(byte cs, uint16_t reg, uint32_t data)
     SPI.beginTransaction(SPISettings(16000000, MSBFIRST, SPI_MODE0));
 
     digitalWrite(cs, LOW);
-    SPI.transfer(SPICMD_SETADDR);
-    SPI.transfer16(reg); // Target register memory location
+    SPI.transfer(SPICMD_SETADDR); // Send 8 bit SPI command
+    SPI.transfer16(reg);          // Target register memory location
     digitalWrite(cs, HIGH);
 
     digitalWrite(cs, LOW);
@@ -49,25 +49,18 @@ static void writeRegister(byte cs, uint16_t reg, uint32_t data)
     SPI.transfer16(data & 0xFF);
     digitalWrite(cs, HIGH);
 
-    digitalWrite(cs, LOW);
-    SPI.transfer(SPICMD_READREG);
-    uint16_t msg = SPI.transfer16(0); // Read from register
-    digitalWrite(cs, HIGH);
-
     SPI.endTransaction();
 
     Serial.print(reg, HEX);
     Serial.print(", ");
     Serial.print((data >> 16), BIN);
     Serial.print(", ");
-    Serial.print((data & 0xFF), BIN);
-    Serial.print(", ");
-    Serial.println(msg, HEX);
+    Serial.println((data & 0xFF), BIN);
 }
 
 /**************************************************************************/
 /*!
-    @brief  Read 8-bits from the specified destination register
+    @brief  Read from the specified destination register
 
     @param cs chip select pin to target device
     @param reg register address
@@ -105,8 +98,8 @@ AD5940::AD5940(byte chipSelect)
 {
     adcGain = GAIN_ONE;
     cs = chipSelect;
-    pinMode(cs, OUTPUT);
-    digitalWrite(cs, HIGH);
+    // pinMode(cs, OUTPUT);
+    // digitalWrite(cs, HIGH);
 }
 
 /**************************************************************************/
@@ -114,7 +107,13 @@ AD5940::AD5940(byte chipSelect)
     @brief  Sets up the serial communication
 */
 /**************************************************************************/
-void AD5940::begin() { SPI.begin(); }
+void AD5940::begin() 
+{
+    SPI.begin();
+    // SPI.setBitOrder(MSBFIRST);
+    // SPI.setDataMode(SPI_MODE0);
+    pinMode(cs, OUTPUT);
+}
 
 /**************************************************************************/
 /*!
