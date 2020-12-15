@@ -165,6 +165,8 @@ void setup()
   digitalWrite(reset, HIGH);
   Serial.println("Reset complete");
 
+  delay(10);
+
   // AD5940_EVAL.begin();
   // AD5940_EVAL.init();
   writeRegister16(AD5940_REG_INIT01, AD5940_DATA_INIT01);
@@ -181,11 +183,12 @@ void setup()
 
 void loop() 
 {
-  writeRegister32(0x00002000, 0x00080000);
-  // writeRegister32(LPTIASW0_ADDR, 0xF);
-  Serial.println(readRegister32(0x00002000));
-  // Serial.println(readRegister16(AD5940_REG_INIT01), HEX);
-  Serial.println(); // Add some spacing
+  // writeRegister32(0x00000040, 0x00000000);
+  Serial.println(readRegister16(AD5940_REG_INIT08), HEX);
 
+  // writeRegister32(0x0000215C, 0x00000001);
+  // Serial.println(readRegister32(0x0000215C), HEX);
+  
+  Serial.println();
   delay(2000);
 }
